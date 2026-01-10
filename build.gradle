@@ -1,0 +1,45 @@
+plugins {
+    id 'java'
+    // Spring Boot version 3.2.0 come da slide Lab 03 Pag 11 e Lab 05 Pag 19
+    id 'org.springframework.boot' version '3.2.0'
+    id 'io.spring.dependency-management' version '1.1.0'
+}
+
+group = 'it.univr'
+version = '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // --- Dipendenze MVC e Database (Lab 03) ---
+    // Spring Boot Web e Thymeleaf per il frontend
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+    // Persistenza dati (JPA) e Database H2
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    runtimeOnly 'com.h2database:h2'
+
+    // --- Dipendenze Testing e Selenium (Lab 05) ---
+    // WebDriverManager per gestire i driver del browser automaticamente
+    testImplementation 'io.github.bonigarcia:webdrivermanager:5.3.3'
+
+    // Selenium Java library
+    testImplementation 'org.seleniumhq.selenium:selenium-java:4.24.0'
+
+    // Spring Boot Test Starter
+    // Le slide mostrano l'esclusione di junit-vintage ma l'aggiunta esplicita di JUnit 4.12
+    testImplementation('org.springframework.boot:spring-boot-starter-test') {
+        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+    }
+
+    // JUnit 4 (specificato esplicitamente nelle slide)
+    testImplementation 'junit:junit:4.12'
+}
+
+test {
+    // Configurazione per usare JUnit Platform
+    useJUnitPlatform()
+}
