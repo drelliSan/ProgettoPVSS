@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title}">Registrazione - SmartTracking</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .register-container {
+            max-width: 450px;
+            margin: 50px auto;
+            padding: 30px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="register-container">
+            <h2 class="text-center mb-4">👤 Registrazione</h2>
+            
+            <!-- Messaggio di Errore -->
+            <div th:if="${error}" class="alert alert-danger" role="alert">
+                <span th:text="${error}"></span>
+            </div>
+
+            <!-- Form di Registrazione -->
+            <form th:action="@{/register}" method="post">
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username *</label>
+                    <input type="text" class="form-control" id="username" name="username" 
+                           placeholder="Scegli un username" required minlength="3">
+                    <div class="form-text">Minimo 3 caratteri</div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email *</label>
+                    <input type="email" class="form-control" id="email" name="email" 
+                           placeholder="tua.email@example.com" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password *</label>
+                    <input type="password" class="form-control" id="password" name="password" 
+                           placeholder="Scegli una password sicura" required minlength="6">
+                    <div class="form-text">Minimo 6 caratteri</div>
+                </div>
+
+                <button type="submit" class="btn btn-success w-100">
+                    🎉 Registrati
+                </button>
+            </form>
+
+            <div class="mt-3 text-center">
+                <p>Hai già un account? <a th:href="@{/login}">Fai il login qui</a></p>
+                <a th:href="@{/}" class="btn btn-outline-secondary btn-sm">← Torna alla Home</a>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

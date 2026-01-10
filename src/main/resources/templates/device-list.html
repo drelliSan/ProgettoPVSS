@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Devices</title>
+</head>
+<body>
+
+<h2>I tuoi dispositivi</h2>
+
+<table>
+    <tr>
+        <th>ID</th>
+        <th>Status</th>
+        <th>Created</th>
+    </tr>
+
+    <tr th:each="d : ${devices}">
+        <td th:text="${d.deviceId}"></td>
+        <td th:text="${d.status}"></td>
+        <td th:text="${d.createdAt}"></td>
+    </tr>
+</table>
+
+<a href="/devices/provision">Registra nuovo device</a>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<a th:href="@{/dashboard}" class="btn btn-outline-secondary mt-3">
+        ← Torna alla Dashboard
+    </a>
+</body>
+</html>
