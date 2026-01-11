@@ -1,7 +1,8 @@
 package it.univr.controller;
 
+import it.univr.model.Status;
 import it.univr.model.Utente;
-import it.univr.repository.UserRepository;
+import it.univr.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 public class WebAuthController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UtenteRepository utenteRepository;
 
     // Pagina di Login (Scenario 2)
     @GetMapping("/login")
@@ -28,10 +29,11 @@ public class WebAuthController {
             @RequestParam("password") String password,
             Model model) {
 
-        Utente user = userRepository.findByEmail(email);
+        Utente user = utenteRepository.findByEmail(email);
+        if(user == null){ user = utenteRepository.findByUsername(email); }
 
         if (user != null && user.getPassword().equals(password)) {
-            if ("ATTIVO".equals(user.getStatus())) {
+            if (Status.ATTIVO.equals(user.getStatus())) {
                 return "redirect:/dashboard";
             } else {
                 model.addAttribute("error", "Account non attivo. Attendi approvazione.");
@@ -58,7 +60,7 @@ public class WebAuthController {
             @RequestParam("password") String password,
             Model model) {
 
-        if (userRepository.findByEmail(email) != null) {
+        if (utenteRepository.findByEmail(email) != null) {
             model.addAttribute("error", "Email già registrata!");
             return "register";
         }
@@ -66,7 +68,7 @@ public class WebAuthController {
         // Creiamo l'utente (password andrebbe hashata in un sistema reale)
         // Assumiamo che User abbia un costruttore adatto o usiamo i setter
         Utente newUser = new Utente(username, "", email,email, password);
-        userRepository.save(newUser);
+        utenteRepository.save(newUser);
 
         return "redirect:/login?success=Registrazione avvenuta con successo!";
     }

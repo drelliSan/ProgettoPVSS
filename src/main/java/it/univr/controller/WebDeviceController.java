@@ -29,13 +29,13 @@ public class WebDeviceController {
         // Per ora mostriamo tutti i device
         Iterable<Device> devices = deviceRepository.findAll();
         model.addAttribute("devices", devices);
-        return "my-devices";
+        return "device-list";
     }
 
     // Pagina Provisioning (Scenario 5)
     @GetMapping("/devices/provision")
     public String provisionPage() {
-        return "provision-device";
+        return "device-provision";
     }
 
     // Azione "Genera Dispositivo" (Scenario 5)
@@ -58,7 +58,7 @@ public class WebDeviceController {
             return "redirect:/devices/provision?error";
         }
 
-        return "provision-device";
+        return "device-provision";
     }
 
     // Helper per generare QR Code in Base64

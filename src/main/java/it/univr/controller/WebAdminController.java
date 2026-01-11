@@ -1,7 +1,8 @@
 package it.univr.controller;
 
+import it.univr.model.Status;
 import it.univr.model.Utente;
-import it.univr.repository.UserRepository;
+import it.univr.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,36 +18,42 @@ import java.util.Optional;
 public class WebAdminController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UtenteRepository utenteRepository;
 
-    // Lista utenti (Scenario 3)
     @GetMapping
     public String listUsers(Model model) {
-        model.addAttribute("users", userRepository.findAll());
+        model.addAttribute("users", utenteRepository.findAll());
+        model.addAttribute("title", "Gestione Utenti - SmartTracking");
         return "admin-users";
     }
 
-    // Cambia ruolo (Scenario 3)
     @PostMapping("/role/{id}")
     public String toggleRole(@PathVariable Long id) {
-        Optional<Utente> userOpt = userRepository.findById(id);
+        Optional<Utente> userOpt = utenteRepository.findById(id);
         if (userOpt.isPresent()) {
             Utente user = userOpt.get();
-            // Logica toggle semplice: se ADMIN diventa USER, se USER diventa ADMIN
-            if ("ADMIN".equals(user.getRole())) {
-                user.setRole("USER");
-            } else {
-                user.setRole("ADMIN");
-            }
-            userRepository.save(user);
+            if ("ADMIN".equals(user.getRole())) user.setRole("USER");
+            else  user.setRole("ADMIN");
+            utenteRepository.save(user);
         }
         return "redirect:/admin/users";
     }
 
-    // Elimina utente (Scenario 4)
     @PostMapping("/delete/{id}")
     public String deleteUser(@PathVariable Long id) {
-        userRepository.deleteById(id);
+        utenteRepository.deleteById(id);
+        return "redirect:/admin/users";
+    }
+
+    @PostMapping("/changeStatus/{id}")
+    public String changeStatus(@PathVariable Long id) {
+        Optional<Utente> userOpt = utenteRepository.findById(id);
+        if (userOpt.isPresent()) {
+            Utente user = userOpt.get();
+            if(user.getStatus().equals(Status.INATTIVO)) user.setStatus(Status.ATTIVO);
+            else user.setStatus(Status.INATTIVO);
+            utenteRepository.save(user);
+        }
         return "redirect:/admin/users";
     }
 }

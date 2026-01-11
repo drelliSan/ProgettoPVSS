@@ -19,7 +19,9 @@
 
 <div class="container mt-4">
 
-    <h2 class="mb-4">👥 Gestione Utenti (Admin)</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-4">👥 Gestione Utenti (Admin)</h2>
+    </div>
 
     <table class="table table-striped table-hover">
         <thead class="table-dark">
@@ -28,6 +30,7 @@
             <th>Email</th>
             <th>Nome</th>
             <th>Ruolo</th>
+            <th>Stato</th>
             <th>Azioni</th>
         </tr>
         </thead>
@@ -39,9 +42,15 @@
             <td th:text="${user.firstName + ' ' + user.lastName}"></td>
             <td>
                 <span class="badge bg-danger"
-                      th:if="${user.role.name() == 'ADMIN'}">ADMIN</span>
+                      th:if="${user.role == 'ADMIN'}">ADMIN</span>
                 <span class="badge bg-primary"
-                      th:if="${user.role.name() == 'USER'}">USER</span>
+                      th:if="${user.role == 'USER'}">USER</span>
+            </td>
+            <td>
+                <span class="badge bg-danger"
+                      th:if="${user.status.name() == 'INATTIVO'}">INATTIVO</span>
+                <span class="badge bg-primary"
+                      th:if="${user.status.name() == 'ATTIVO'}">ATTIVO</span>
             </td>
             <td class="d-flex gap-2">
 
@@ -49,16 +58,23 @@
                 <form th:action="@{/admin/users/role/{id}(id=${user.id})}"
                       method="post">
                     <button class="btn btn-sm btn-warning">
-                        🔄 Cambia ruolo
+                        Cambia ruolo
                     </button>
                 </form>
 
                 <!-- Elimina utente -->
                 <form th:action="@{/admin/users/delete/{id}(id=${user.id})}"
                       method="post"
-                      th:if="${user.role.name() != 'ADMIN'}">
+                      th:if="${user.role != 'ADMIN'}">
                     <button class="btn btn-sm btn-danger">
-                        🗑 Elimina
+                        Elimina
+                    </button>
+                </form>
+
+                <form th:action="@{/admin/users/changeStatus/{id}(id=${user.id})}"
+                      method="post">
+                    <button class="btn btn-sm btn-secondary">
+                        Attiva/Disattiva utente
                     </button>
                 </form>
 

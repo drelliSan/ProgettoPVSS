@@ -14,7 +14,7 @@ public class Device {
     private Status status;
     private String apiKey;
 
-    protected Device() {}
+    public Device() {}
 
     public Device(String macAddress) {
         this.macAddress = macAddress;
