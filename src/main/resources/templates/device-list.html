@@ -33,13 +33,12 @@
             <th>MAC Address</th>
             <th>Stato</th>
             <th>Chiave Pubblica</th>
-            <th>Data Creazione</th>
         </tr>
         </thead>
 
         <tbody>
         <tr th:each="d : ${devices}">
-            <td th:text="${d.deviceId}"></td>
+            <td th:text="${d.id}"></td>
 
             <td th:text="${d.macAddress}"></td>
 
@@ -56,8 +55,6 @@
             </td>
 
             <td th:text="${d.apiKey}"></td>
-
-            <td th:text="${d.createdAt}"></td>
         </tr>
         </tbody>
     </table>

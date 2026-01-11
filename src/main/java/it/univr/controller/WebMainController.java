@@ -4,6 +4,7 @@ import it.univr.Utils;
 import it.univr.model.Status;
 import it.univr.model.Utente;
 import it.univr.repository.UtenteRepository;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,18 +21,23 @@ public class WebMainController {
     // Pagina Home (Index)
     @GetMapping("/")
     public String home() {
-        Utils.createUser(utenteRepository);
+        if(utenteRepository.count()==0) Utils.createUser(utenteRepository);
         return "index";
     }
 
     // Dashboard (Scenario 2 post-login)
     @GetMapping("/dashboard")
-    public String dashboard(Model model, Principal principal) {
-        // Principal contiene l'utente loggato (grazie a Spring Security)
-        String username = (principal != null) ? principal.getName() : "Ospite";
+    public String dashboard(HttpSession session, Model model) {
+        // 1. Recupera l'utente dalla sessione
+        Utente user = (Utente) session.getAttribute("currentUser");
 
-        model.addAttribute("title", "Dashboard");
-        model.addAttribute("username", username);
-        return "dashboard";
+        // 2. Se è null, vuol dire che non ha fatto login
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // 3. Se c'è, mostra la pagina
+        model.addAttribute("user", user);
+        return "dashboard"; // la tua pagina HTML dashboard
     }
 }

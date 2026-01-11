@@ -35,7 +35,7 @@ public class APIDeviceController {
 
         if (devOpt.isPresent()) {
             Device device = devOpt.get();
-            if ("INATTIVO".equals(device.getStatus())) {
+            if (device.getStatus().equals(Status.INATTIVO)) {
                 String newApiKey = UUID.randomUUID().toString();
                 device.setApiKey(newApiKey);
                 device.setStatus(Status.ATTIVO);
@@ -56,7 +56,7 @@ public class APIDeviceController {
 
         Device device = deviceRepository.findByApiKey(apiKey);
 
-        if (device != null && "ATTIVO".equals(device.getStatus())) {
+        if (device != null && device.getStatus().equals(Status.ATTIVO)) {
             System.out.println("Data received: " + sensorData);
             return ResponseEntity.ok("Data received");
         }

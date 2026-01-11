@@ -26,6 +26,7 @@ public class Utente {
         this.email = email;
         this.username = username;
         this.password = password;
+        this.role = "USER";
         this.status = Status.INATTIVO;
     }
 
