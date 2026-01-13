@@ -29,6 +29,7 @@
             <th>ID</th>
             <th>Email</th>
             <th>Nome</th>
+            <th>Username</th>
             <th>Ruolo</th>
             <th>Stato</th>
             <th>Azioni</th>
@@ -40,6 +41,7 @@
             <td th:text="${user.id}"></td>
             <td th:text="${user.email}"></td>
             <td th:text="${user.firstName + ' ' + user.lastName}"></td>
+            <td th:text="${user.username}"></td>
             <td>
                 <span class="badge bg-danger"
                       th:if="${user.role == 'ADMIN'}">ADMIN</span>
@@ -53,6 +55,11 @@
                       th:if="${user.status.name() == 'ATTIVO'}">ATTIVO</span>
             </td>
             <td class="d-flex gap-2">
+
+                <!-- Modifica utente -->
+                <a th:href="@{/admin/users/edit/{id}(id=${user.id})}" class="btn btn-sm btn-secondary">
+                    Modifica
+                </a>
 
                 <!-- Cambia ruolo -->
                 <form th:action="@{/admin/users/role/{id}(id=${user.id})}"

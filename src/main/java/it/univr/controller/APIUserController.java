@@ -8,67 +8,61 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
-@RestController //
-@RequestMapping("/users")
+@RestController
+@RequestMapping("/api/users")
 public class APIUserController {
 
-    @Autowired
+    @Autowired // Injection del repository (Lab 03, Slide 31)
     private UtenteRepository utenteRepository;
 
-    // SCENARIO 1: Registrazione
-    @PostMapping
-    public ResponseEntity<?> register(@RequestBody Utente user) {
-        if (utenteRepository.findByEmail(user.getEmail()) != null) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email already exists");
+    // Funzionalità: Creazione account utente
+    // Utilizza POST come da best practice REST per creare risorse (Lab 03, Slide 8)
+    @PostMapping("/register")
+    public ResponseEntity<Object> register(@RequestBody Utente newUser) { // @RequestBody prende l'oggetto dal JSON (Lab 03, Slide 32)
+
+        // Controllo duplicati (Logica di business basata sui dati forniti)
+        if (utenteRepository.findByEmail(newUser.getEmail()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Email già registrata");
         }
-        Utente savedUser = utenteRepository.save(user);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
+        if (utenteRepository.findByUsername(newUser.getUsername()) != null) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Username già in uso");
+        }
+
+        // Impostiamo i default se mancanti
+        if (newUser.getStatus() == null) newUser.setStatus(Status.ATTIVO);
+        if (newUser.getRole() == null) newUser.setRole("USER");
+
+        utenteRepository.save(newUser);
+
+        // Ritorna 201 Created (Lab 03, Slide 12)
+        return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
     }
 
-    // SCENARIO 2: Login
+    // Funzionalità: Autenticazione Utenti
+    // REST è Stateless, quindi non usiamo Session. Ritorniamo l'utente se successo, 401 se fallito.
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody Utente credentials) {
-        Utente user = utenteRepository.findByEmail(credentials.getEmail());
+    public ResponseEntity<Object> login(@RequestBody Map<String, String> credentials) {
+        String emailOrUser = credentials.get("username");
+        String password = credentials.get("password");
 
-        if (user != null && user.getPassword().equals(credentials.getPassword())) {
-            if ("ATTIVO".equals(user.getStatus())) {
-                return ResponseEntity.ok("Login Successful. Role: " + user.getRole());
+        Utente user = utenteRepository.findByEmail(emailOrUser);
+        if (user == null) {
+            user = utenteRepository.findByUsername(emailOrUser);
+        }
+
+        if (user != null && user.getPassword().equals(password)) {
+            if (Status.ATTIVO.equals(user.getStatus())) {
+                // Ritorna 200 OK con i dati dell'utente (Lab 03, Slide 12)
+                return ResponseEntity.ok(user);
+            } else {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account non attivo");
             }
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Account not active");
         }
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-    }
 
-    // SCENARIO 3: Modifica (PUT)
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody Utente userDetails) {
-        Optional<Utente> userOpt = utenteRepository.findById(id);
-
-        if (userOpt.isPresent()) {
-            Utente user = userOpt.get();
-            user.setRole(userDetails.getRole());
-            user.setStatus(Status.ATTIVO);
-            return ResponseEntity.ok(utenteRepository.save(user));
-        } else {
-            return ResponseEntity.notFound().build(); // Ritorna 404 senza eccezioni
-        }
-    }
-
-    // SCENARIO 4: Eliminazione
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
-        if (utenteRepository.existsById(id)) {
-            utenteRepository.deleteById(id);
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
-        }
-    }
-
-    @GetMapping
-    public Iterable<Utente> getAllUsers() {
-        return utenteRepository.findAll();
+        // Ritorna Client Error se credenziali errate (Lab 03, Slide 14)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenziali non valide");
     }
 }

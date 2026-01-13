@@ -6,10 +6,7 @@ import it.univr.repository.UtenteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -54,6 +51,42 @@ public class WebAdminController {
             else user.setStatus(Status.INATTIVO);
             utenteRepository.save(user);
         }
+        return "redirect:/admin/users";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String showEditUserForm(@PathVariable Long id, Model model) {
+        Optional<Utente> userOpt = utenteRepository.findById(id);
+
+        if (userOpt.isPresent()) {
+            model.addAttribute("userForm", userOpt.get());
+            return "admin-user-edit"; // Nome del nuovo file HTML
+        } else {
+            return "redirect:/admin/users"; // Se l'ID non esiste, torna alla lista
+        }
+    }
+
+    @PostMapping("/update")
+    public String updateUser(@ModelAttribute("userForm") Utente formData) {
+        Optional<Utente> userOpt = utenteRepository.findById(formData.getId());
+
+        if (userOpt.isPresent()) {
+            Utente existingUser = userOpt.get();
+
+            // Aggiorniamo i dati anagrafici
+            existingUser.setFirstName(formData.getFirstName());
+            existingUser.setLastName(formData.getLastName());
+            existingUser.setEmail(formData.getEmail());
+            existingUser.setUsername(formData.getUsername());
+
+            // L'admin può resettare la password. Se il campo è vuoto, manteniamo la vecchia.
+            if (formData.getPassword() != null && !formData.getPassword().isEmpty()) {
+                existingUser.setPassword(formData.getPassword());
+            }
+
+            utenteRepository.save(existingUser);
+        }
+
         return "redirect:/admin/users";
     }
 }

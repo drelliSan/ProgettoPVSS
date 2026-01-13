@@ -1,7 +1,6 @@
 package it.univr.controller;
 
 import it.univr.Utils;
-import it.univr.model.Status;
 import it.univr.model.Utente;
 import it.univr.repository.UtenteRepository;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import java.security.Principal;
 
@@ -38,6 +39,44 @@ public class WebMainController {
 
         // 3. Se c'è, mostra la pagina
         model.addAttribute("user", user);
-        return "dashboard"; // la tua pagina HTML dashboard
+        return "dashboard";
+    }
+
+    @GetMapping("/profileSettings")
+    public String showProfileSettings(HttpSession session, Model model) {
+        Utente user = (Utente) session.getAttribute("currentUser");
+
+        // Controllo di sicurezza
+        if (user == null) {
+            return "redirect:/login";
+        }
+
+        // Passiamo l'utente al modello per riempire i campi
+        model.addAttribute("utenteForm", user);
+        return "profile-settings";
+    }
+
+    @PostMapping("/profileSettings")
+    public String updateProfile(@ModelAttribute("utenteForm") Utente formData, HttpSession session) {
+        Utente sessionUser = (Utente) session.getAttribute("currentUser");
+
+        if (sessionUser == null) {
+            return "redirect:/login";
+        }
+
+        sessionUser.setFirstName(formData.getFirstName());
+        sessionUser.setLastName(formData.getLastName());
+        sessionUser.setEmail(formData.getEmail());
+        sessionUser.setUsername(formData.getUsername());
+
+        if (formData.getPassword() != null && !formData.getPassword().isEmpty()) {
+            sessionUser.setPassword(formData.getPassword());
+        }
+
+        utenteRepository.save(sessionUser);
+
+        session.setAttribute("currentUser", sessionUser);
+
+        return "redirect:/dashboard";
     }
 }

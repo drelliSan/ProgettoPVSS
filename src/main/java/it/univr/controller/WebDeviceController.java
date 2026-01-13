@@ -66,6 +66,61 @@ public class WebDeviceController {
         return "device-provision";
     }
 
+    // 1. Toggle Status (Attiva/Disattiva)
+    @PostMapping("/devices/toggleStatus")
+    public String toggleDeviceStatus(@RequestParam("deviceId") Long deviceId) {
+        Optional<Device> optionalDevice = deviceRepository.findById(deviceId);
+
+        if (optionalDevice.isPresent()) {
+            Device device = optionalDevice.get();
+
+            // Logica di toggle semplice
+            if (device.getStatus() == Status.ATTIVO) {
+                device.setStatus(Status.INATTIVO);
+            } else {
+                device.setStatus(Status.ATTIVO);
+            }
+
+            deviceRepository.save(device);
+        }
+        return "redirect:/devices";
+    }
+
+    // 2. Mostra Pagina di Associazione (GET)
+    @GetMapping("/devices/associate")
+    public String showAssociatePage(@RequestParam("deviceId") Long deviceId, Model model) {
+        Optional<Device> optionalDevice = deviceRepository.findById(deviceId);
+
+        if (optionalDevice.isPresent()) {
+            model.addAttribute("device", optionalDevice.get());
+            return "device-associate"; // Nome del nuovo file HTML
+        } else {
+            return "redirect:/devices?error=NotFound";
+        }
+    }
+
+    // 3. Esegui Associazione (POST)
+    @PostMapping("/devices/associate")
+    public String performAssociation(@RequestParam("deviceId") Long deviceId,
+                                     @RequestParam("macAddress") String macAddress) {
+
+        Optional<Device> optionalDevice = deviceRepository.findById(deviceId);
+
+        if (optionalDevice.isPresent()) {
+            Device device = optionalDevice.get();
+
+            // Imposta il MAC Address ricevuto dal form
+            device.setMacAddress(macAddress);
+
+            // Attiva automaticamente il dispositivo come richiesto
+            device.setStatus(Status.ATTIVO);
+
+            deviceRepository.save(device);
+        }
+
+        return "redirect:/devices";
+    }
+
     private String generateQRCodeImage(String text) throws Exception {
         QRCodeWriter barcodeWriter = new QRCodeWriter();
         BitMatrix bitMatrix = barcodeWriter.encode(text, BarcodeFormat.QR_CODE, 200, 200);

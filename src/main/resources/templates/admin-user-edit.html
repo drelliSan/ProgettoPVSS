@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Modifica Utente - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container-fluid">
+        <span class="navbar-brand">📦 SmartTracking - Admin Area</span>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Modifica Utente: <span th:text="${userForm.username}"></span></h5>
+                </div>
+                <div class="card-body">
+
+                    <form th:action="@{/admin/users/update}" th:object="${userForm}" method="post">
+
+                        <input type="hidden" th:field="*{id}">
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="firstName" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="firstName" th:field="*{firstName}" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="lastName" class="form-label">Cognome</label>
+                                <input type="text" class="form-control" id="lastName" th:field="*{lastName}" required>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="email" th:field="*{email}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="username" th:field="*{username}">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label text-danger">Reset Password</label>
+                            <input type="text" class="form-control border-danger" id="password" name="password"
+                                   placeholder="Lascia vuoto per mantenere la password attuale">
+                            <div class="form-text">Inserisci un valore solo se vuoi forzare il cambio password dell'utente.</div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a th:href="@{/admin/users}" class="btn btn-secondary">Annulla</a>
+                            <button type="submit" class="btn btn-primary">Salva Modifiche</button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

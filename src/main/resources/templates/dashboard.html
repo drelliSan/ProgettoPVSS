@@ -52,7 +52,21 @@
             </div>
 
             <!-- Card Admin (solo per ADMIN) -->
-            <div class="col-md-4 mb-4" sec:authorize="hasAuthority('ADMIN')">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Il tuo profilo</h5>
+                        <p class="card-text">Visualizza e gestisci il tuo profilo.</p>
+                        <a th:href="@{/profileSettings}" class="btn btn-warning">Gestisci Profilo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mt-4">
+
+            <!-- Card Admin (solo per ADMIN) -->
+            <div class="col-md-4 mb-4" th:if="${session.currentUser != null and session.currentUser.role == 'ADMIN'}">
                 <div class="card h-100">
                     <div class="card-body text-center">
                         <h5 class="card-title">👥 Gestione Utenti</h5>
@@ -61,27 +75,9 @@
                     </div>
                 </div>
             </div>
+
         </div>
 
-        <div class="row mt-4">
-            <div class="col-md-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h5>📊 Statistiche Sistema</h5>
-                    </div>
-                    <div class="card-body">
-                        <p>Modulo 1 - Anagrafica e controllo accessi</p>
-                        <ul>
-                            <li>✅ Registrazione utenti</li>
-                            <li>✅ Autenticazione utenti</li>
-                            <li>✅ Provisioning devices con QR code</li>
-                            <li>✅ Interfaccia amministratore</li>
-                            <li>✅ Gestione dispositivi</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

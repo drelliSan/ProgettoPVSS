@@ -2,7 +2,7 @@ package it.univr.model;
 
 import jakarta.persistence.*;
 
-@Entity // [cite: 330]
+@Entity
 public class Device {
 
     @Id
@@ -22,9 +22,11 @@ public class Device {
     }
 
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getMacAddress() { return macAddress; }
+    public void setMacAddress(String macAddress) { this.macAddress = macAddress; }
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
     public String getApiKey() { return apiKey; }
     public void setApiKey(String apiKey) { this.apiKey = apiKey; }
-    public String getMacAddress() { return macAddress; }
 }
