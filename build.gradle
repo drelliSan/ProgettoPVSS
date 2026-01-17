@@ -2,6 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.0'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'jacoco'
 }
 
 group = 'it.univr'
@@ -25,9 +26,9 @@ dependencies {
 
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.24.0'
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    testRuntimeOnly 'org.junit.vintage:junit-vintage-engine:5.10.1'
 
     testImplementation 'junit:junit:4.12'
 }
@@ -35,3 +36,14 @@ dependencies {
 test {
     useJUnitPlatform()
 }
+
+jacocoTestReport {
+    dependsOn test
+
+    reports {
+        xml.required = true
+        csv.required = false
+        html.required = true
+    }
+}
+
